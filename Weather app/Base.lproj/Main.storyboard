@@ -27,8 +27,8 @@
                             <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="background" translatesAutoresizingMaskIntoConstraints="NO" id="8ra-m1-3o1">
                                 <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                             </imageView>
-                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="sun.max.fill" catalog="system" translatesAutoresizingMaskIntoConstraints="NO" id="MSF-Hn-HDC" userLabel="weatherImage">
-                                <rect key="frame" x="137.5" y="223.5" width="100" height="100.5"/>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="MSF-Hn-HDC" userLabel="weatherImage">
+                                <rect key="frame" x="137.5" y="224" width="100" height="100"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="100" id="Jw2-v9-VKr">
                                         <variation key="heightClass=compact-widthClass=compact" constant="50"/>
@@ -38,7 +38,7 @@
                                     </constraint>
                                 </constraints>
                             </imageView>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Wed, 28 Nov 2018    11:35 AM" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="b8V-pf-rF2" userLabel="dateAndTime">
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="b8V-pf-rF2" userLabel="dateAndTime">
                                 <rect key="frame" x="70" y="98" width="235" height="15"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="15" id="Gbr-xf-IGc"/>
@@ -47,7 +47,7 @@
                                 <color key="textColor" white="1" alpha="0.59979666099999995" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Udupi, Karnataka" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="15" adjustsLetterSpacingToFitWidth="YES" translatesAutoresizingMaskIntoConstraints="NO" id="4Vg-H3-w3v" userLabel="Location">
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="15" adjustsLetterSpacingToFitWidth="YES" translatesAutoresizingMaskIntoConstraints="NO" id="4Vg-H3-w3v" userLabel="Location">
                                 <rect key="frame" x="70" y="123" width="235" height="21"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="21" id="wIh-FB-5QF"/>
@@ -107,8 +107,8 @@
                                     <action selector="celciusToFarenheitTapped:" destination="bxf-nh-E1k" eventType="valueChanged" id="bv3-Mj-fei"/>
                                 </connections>
                             </segmentedControl>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Mostly Sunny" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="g3Z-QB-j5H" userLabel="temp description">
-                                <rect key="frame" x="133" y="421.5" width="109.5" height="21"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="g3Z-QB-j5H" userLabel="temp description">
+                                <rect key="frame" x="187.5" y="421.5" width="0.0" height="0.0"/>
                                 <fontDescription key="fontDescription" name="Roboto-Regular" family="Roboto" pointSize="18"/>
                                 <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <nil key="highlightedColor"/>
@@ -163,7 +163,7 @@
                                                     </userDefinedRuntimeAttribute>
                                                 </userDefinedRuntimeAttributes>
                                             </label>
-                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="22° - 34°" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="gVf-YZ-ndf" customClass="robotoMediumLabel" customModule="Weather_app" customModuleProvider="target">
+                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="gVf-YZ-ndf" customClass="robotoMediumLabel" customModule="Weather_app" customModuleProvider="target">
                                                 <rect key="frame" x="0.0" y="25.5" width="70" height="21"/>
                                                 <constraints>
                                                     <constraint firstAttribute="height" constant="21" id="nBI-nb-uuI"/>
@@ -246,7 +246,7 @@
                                                     </mask>
                                                 </variation>
                                             </label>
-                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="0%" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="qet-2d-1tI" customClass="robotoMediumLabel" customModule="Weather_app" customModuleProvider="target">
+                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="qet-2d-1tI" customClass="robotoMediumLabel" customModule="Weather_app" customModuleProvider="target">
                                                 <rect key="frame" x="0.0" y="25.5" width="55" height="21"/>
                                                 <constraints>
                                                     <constraint firstAttribute="height" constant="21" id="dTR-2p-Hwu"/>
@@ -491,6 +491,9 @@
                                         <color key="value" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                     </userDefinedRuntimeAttribute>
                                 </userDefinedRuntimeAttributes>
+                                <connections>
+                                    <action selector="removeAllBtnTapped:" destination="3gJ-6L-yfh" eventType="touchUpInside" id="Eav-du-1SN"/>
+                                </connections>
                             </button>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="6 City added as favourite" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="92L-Yo-uO8" customClass="robotoRegularFontLabel" customModule="Weather_app" customModuleProvider="target">
                                 <rect key="frame" x="16" y="59" width="161.5" height="20.5"/>
@@ -635,6 +638,7 @@
                     </view>
                     <navigationItem key="navigationItem" id="zop-BG-iy3"/>
                     <connections>
+                        <outlet property="favouriteCount" destination="92L-Yo-uO8" id="9Fv-eQ-ayb"/>
                         <outlet property="tableView" destination="Qib-UD-ZjH" id="SYZ-Iy-Pgg"/>
                     </connections>
                 </viewController>
@@ -776,7 +780,11 @@
                                             </constraints>
                                         </tableViewCellContentView>
                                         <connections>
+                                            <outlet property="icon" destination="8Xq-Tw-B2U" id="sD3-R4-7NS"/>
+                                            <outlet property="location" destination="w7n-dP-cyV" id="zGF-UA-Za6"/>
                                             <outlet property="subView" destination="qqb-A4-dkp" id="MI1-D9-XVv"/>
+                                            <outlet property="tempDescription" destination="Ese-vL-sE5" id="DEy-qC-1BA"/>
+                                            <outlet property="temperature" destination="Vk7-SF-dJN" id="sA3-3q-0Es"/>
                                         </connections>
                                     </tableViewCell>
                                 </prototypes>
@@ -868,12 +876,8 @@
         <designable name="gL7-ob-b3n">
             <size key="intrinsicContentSize" width="26" height="20.5"/>
         </designable>
-        <designable name="gVf-YZ-ndf">
-            <size key="intrinsicContentSize" width="72" height="20.5"/>
-        </designable>
-        <designable name="qet-2d-1tI">
-            <size key="intrinsicContentSize" width="26" height="20.5"/>
-        </designable>
+        <designable name="gVf-YZ-ndf"/>
+        <designable name="qet-2d-1tI"/>
         <designable name="uw3-Mx-OKx">
             <size key="intrinsicContentSize" width="102" height="33"/>
         </designable>
@@ -897,7 +901,6 @@
         <image name="icon_precipitation_info" width="39" height="37.5"/>
         <image name="icon_temperature_info" width="22.5" height="42"/>
         <image name="sun.max" catalog="system" width="128" height="124"/>
-        <image name="sun.max.fill" catalog="system" width="128" height="124"/>
         <systemColor name="labelColor">
             <color white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>

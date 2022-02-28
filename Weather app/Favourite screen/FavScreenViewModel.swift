@@ -80,6 +80,10 @@ class FavScreenViewModel {
         }
     }
     
+    func removeAllFavourites() {
+        favouritesArray = []
+    }
+    
     func allFavourites() -> [FavouriteWeather] {
         return favouritesArray
     }

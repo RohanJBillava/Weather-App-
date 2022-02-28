@@ -57,6 +57,7 @@ class HomeScreenViewController: UIViewController {
     
     let wmvm = WeatherModelViewModel()
     let FavScreenVM = FavScreenViewModel()
+    let recentScreenVM = RecentScreenViewModel()
     var weathers = [HomeWeather]()
     
     let locationManager = LocationManager.shared
@@ -104,7 +105,7 @@ class HomeScreenViewController: UIViewController {
         let id = segueIdentifier()
         if segue.identifier == id.favoutire {
             let vc = segue.destination as? FavouriteScreenViewController
-            vc?.homeScreenVM = wmvm
+            vc?.delegate = self
             vc?.favScreenVm = FavScreenVM
             vc?.navigationItem.title = "Favourite"
             navigationItem.backButtonTitle = ""
@@ -112,7 +113,7 @@ class HomeScreenViewController: UIViewController {
         
         if segue.identifier == id.recent {
             let vc = segue.destination as? RecentScreenViewController
-            vc?.homeScreenVM = wmvm
+            vc?.recentScreenVM = recentScreenVM
             vc?.navigationItem.title = "Recent Search"
             navigationItem.backButtonTitle = ""
         }
@@ -195,6 +196,56 @@ class HomeScreenViewController: UIViewController {
         navigationItem.rightBarButtonItem = searchBtn
     }
     
+    func updateUI(for location: String) {
+        let allWeathers = wmvm.fetchAllWeathersData()
+        
+        let res = allWeathers.filter { (item) -> Bool in
+             item.name == location
+        }
+        
+        if res.isEmpty {
+            showAlert(title: "OOPS", message: "searched place not found")
+        }else {
+            guard let filteredWeather = res.first else {
+                return
+            }
+            
+            let dt = filteredWeather.dt
+            let dateString = wmvm.fetchDateFrom(dt: dt)
+            let minTemp = Int(filteredWeather.minTemperature)
+            let maxTemp = Int(filteredWeather.maxTemperature)
+            let temp = Int(filteredWeather.temperature)
+            let humidity = Int(filteredWeather.humidity)
+            let minMax = "\(minTemp)°-\(maxTemp)°"
+            let description = filteredWeather.weather.description.capitalized
+            let iconID = filteredWeather.weather.icon
+            
+             
+            DispatchQueue.main.sync {
+                fetchImage(from: iconID)
+                searchbar(shouldShow: false)
+                setupLeftNavBar()
+                bgViewBottomConstraint.constant = view.frame.size.height
+                placeNameLabel.text = "\(filteredWeather.name), \(filteredWeather.country)"
+                dateLbl.text = dateString
+                temperatureLabel.text = "\(temp)"
+                minMaxLbl.text = minMax
+                humidityLbl.text = "\(humidity)%"
+                tempDescriptionLbl.text = description
+                favBtnToggler.setButtonBackGround(view: favButton, onOffStatus: false)
+                
+//                guard let img = self.weatherImage.image else {
+//                    print("unwrapping img failed")
+//                    return
+//                }
+//                let searchedWeather = FavouriteWeather(location: filteredWeather.name, icon: img, temperature: "\(temp)", weatherDescription: description)
+//                self.recentScreenVM.add(weather: searchedWeather)
+            }
+            
+            
+        }
+        
+    }
     
     
     //
@@ -316,9 +367,6 @@ class HomeScreenViewController: UIViewController {
     @IBAction func favBtnTapped(_ sender: UIButton) {
         
         FavouriteBtnisOn.toggle()
-        
-        
-        
         guard let location = placeNameLabel.text,
         let icon = weatherImage.image,
         let temperature = temperatureLabel.text,
@@ -330,11 +378,13 @@ class HomeScreenViewController: UIViewController {
         
         if FavouriteBtnisOn {
             FavScreenVM.add(weather: weather)
+            defaults.setValue(FavouriteBtnisOn, forKey: "FavBtnStatus")
         }else {
             FavScreenVM.remove(weather: weather)
+            defaults.setValue(FavouriteBtnisOn, forKey: "FavBtnStatus")
         }
           
-        defaults.setValue(true, forKey: "FavBtnStatus")
+        
         favBtnToggler.setButtonBackGround(view: sender, onOffStatus: FavouriteBtnisOn)
     }
     
@@ -372,6 +422,22 @@ class HomeScreenViewController: UIViewController {
         }
     }
     
+    func saveSearchedPlace() {
+        DispatchQueue.main.async {
+            guard let location = self.placeNameLabel.text,
+                  let icon = self.weatherImage.image,
+                  let temperature = self.temperatureLabel.text,
+                  let description = self.tempDescriptionLbl.text else {
+                fatalError("error")
+            }
+            
+            let weather = FavouriteWeather(location: location, icon: icon, temperature: temperature, weatherDescription: description)
+            
+            self.recentScreenVM.add(weather: weather)
+        }
+        
+        
+    }
     
 }
 
@@ -423,6 +489,11 @@ extension HomeScreenViewController: UISearchBarDelegate {
                             
                             self.wmvm.add(weather: weather)
                             self.updateUI(for: weather.name)
+                            
+                            DispatchQueue.main.sync {
+                                searchBar.text = ""
+                            }
+                            self.saveSearchedPlace()
                         }
                         
                     }else {
@@ -442,47 +513,14 @@ extension HomeScreenViewController: UISearchBarDelegate {
         }
     }
     
-    func updateUI(for location: String) {
-        let allWeathers = wmvm.fetchAllWeathersData()
-        
-        let res = allWeathers.filter { (item) -> Bool in
-             item.name == location
-        }
-        
-        if res.isEmpty {
-            showAlert(title: "OOPS", message: "searched place not found")
-        }else {
-            guard let filteredWeather = res.first else {
-                return
-            }
-            
-            let dt = filteredWeather.dt
-            let dateString = wmvm.fetchDateFrom(dt: dt)
-            let minTemp = Int(filteredWeather.minTemperature)
-            let maxTemp = Int(filteredWeather.maxTemperature)
-            let temp = Int(filteredWeather.temperature)
-            let humidity = Int(filteredWeather.humidity)
-            let minMax = "\(minTemp)°-\(maxTemp)°"
-            let description = filteredWeather.weather.description.capitalized
-            let iconID = filteredWeather.weather.icon
-            fetchImage(from: iconID)
-             
-            DispatchQueue.main.sync {
-                searchbar(shouldShow: false)
-                setupLeftNavBar()
-                bgViewBottomConstraint.constant = view.frame.size.height
-                placeNameLabel.text = "\(filteredWeather.name), \(filteredWeather.country)"
-                dateLbl.text = dateString
-                temperatureLabel.text = "\(temp)"
-                minMaxLbl.text = minMax
-                humidityLbl.text = "\(humidity)%"
-                tempDescriptionLbl.text = description
-            }
-          
-        }
-        
-    }
+   
 }
 
 
-
+extension HomeScreenViewController: FavouriteScreenViewControllerProtocol {
+    func updateFavBtn(state: Bool) {
+        FavouriteBtnisOn = state
+        defaults.setValue(FavouriteBtnisOn, forKey: "FavBtnStatus")
+        favBtnToggler.setButtonBackGround(view: favButton, onOffStatus: state)
+    }
+}

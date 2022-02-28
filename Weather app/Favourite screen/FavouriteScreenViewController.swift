@@ -7,15 +7,27 @@
 
 import UIKit
 
+@objc protocol FavouriteScreenViewControllerProtocol {
+     @objc optional func updateFavBtn(state: Bool)
+}
+
 class FavouriteScreenViewController: UIViewController {
 
     
     @IBOutlet weak var tableView: UITableView!
     
+    @IBOutlet weak var favouriteCount: robotoRegularFontLabel!
     
-    var homeScreenVM: WeatherModelViewModel?
+//    var homeScreenVM: WeatherModelViewModel?
     var favScreenVm: FavScreenViewModel?
-    var favouritesArray:[FavouriteWeather] = []
+    var favouritesArray:[FavouriteWeather] = [] {
+        didSet {
+            favouriteCount.text = "\(favouritesArray.count) City added as favourite"
+        }
+    }
+    weak var delegate: FavouriteScreenViewControllerProtocol?
+    
+    
     //
     // MARK: VIEW METHODS
     //
@@ -58,6 +70,25 @@ class FavouriteScreenViewController: UIViewController {
         print("tap tap")
     }
     
+    @IBAction func removeAllBtnTapped(_ sender: UIButton) {
+        let alert = UIAlertController(title: "", message: "Are you sure want to remove all the favourites?", preferredStyle: .alert)
+        let no = UIAlertAction(title: "No", style: .cancel) { (no) in
+            alert.dismiss(animated: true, completion: nil)
+        }
+        alert.addAction(no)
+        let yes = UIAlertAction(title: "Yes", style: .destructive) { (ok) in
+            if let favScreenVm = self.favScreenVm {
+                self.favScreenVm?.removeAllFavourites()
+                self.favouritesArray = favScreenVm.allFavourites()
+                self.tableView.reloadData()
+                self.delegate?.updateFavBtn?(state: false)
+                alert.dismiss(animated: true, completion: nil)
+            }
+            
+        }
+        alert.addAction(yes)
+        present(alert, animated: true, completion: nil)
+    }
 }
 
 //

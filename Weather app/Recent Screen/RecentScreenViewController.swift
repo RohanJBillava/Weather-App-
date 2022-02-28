@@ -13,8 +13,8 @@ class RecentScreenViewController: UIViewController {
     
     @IBOutlet weak var table: UITableView!
     
-    var homeScreenVM: WeatherModelViewModel?
-    
+    var recentScreenVM: RecentScreenViewModel?
+    var recentsArr:[FavouriteWeather] = []
     //
     // MARK: VIEW METHODS
     //
@@ -29,6 +29,13 @@ class RecentScreenViewController: UIViewController {
         
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(true)
+        if let recentScreenVM = recentScreenVM {
+            self.recentsArr = recentScreenVM.allSearches()
+            table.reloadData()
+        }
+    }
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(true)
         navigationController?.navigationBar.backgroundColor = .none
@@ -57,11 +64,13 @@ class RecentScreenViewController: UIViewController {
 
 extension RecentScreenViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 6
+        return recentsArr.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let weather = recentsArr[indexPath.row]
         let cell = table.dequeueReusableCell(withIdentifier: "recentCell", for: indexPath) as! recentSCreenTableViewCell
+        cell.configureRecentWeather(weather: weather)
         cell.configureCell()
         return cell
         
