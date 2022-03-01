@@ -12,7 +12,7 @@ import UIKit
     
     
     
-     func createLeftNav() -> [UIBarButtonItem] {
+     func createLeftBarButtons() -> [UIBarButtonItem] {
         let button1 = UIButton.init(type: .custom)
         button1.setImage(#imageLiteral(resourceName: "logo"), for: .normal)
         
@@ -28,8 +28,6 @@ import UIKit
         let button2 = UIButton.init(type: .custom)
         
         button2.setImage(#imageLiteral(resourceName: "icon_menu_white"), for: .normal)
-     
-//        button2.addTarget(self, action: #selector(menuBarBtnItemTapped), for: .touchUpInside)
         
         button2.frame = CGRect(x: 0, y: 0, width: 24, height: 24)
         
@@ -38,11 +36,12 @@ import UIKit
         let space = UIBarButtonItem(barButtonSystemItem: .fixedSpace, target: nil, action: nil)
         space.width = 30
         
-//        UINavigationItem.leftBarButtonItems = [menuBarBtnItem,space, LogobarButton]
        return [menuBarBtnItem,space, LogobarButton]
     }
     
-    @objc func menuBarBtnItemTapped(){
-        print("tapped")
+    func createRightBarButtons() -> UIBarButtonItem {
+        let searchBtn = UIBarButtonItem(barButtonSystemItem: .search, target: nil, action: nil)
+        searchBtn.tintColor = .white
+        return searchBtn
     }
 }

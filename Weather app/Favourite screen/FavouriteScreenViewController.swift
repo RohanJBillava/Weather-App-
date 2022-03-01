@@ -7,9 +7,7 @@
 
 import UIKit
 
-@objc protocol FavouriteScreenViewControllerProtocol {
-     @objc optional func updateFavBtn(state: Bool)
-}
+
 
 class FavouriteScreenViewController: UIViewController {
 
@@ -25,7 +23,7 @@ class FavouriteScreenViewController: UIViewController {
             favouriteCount.text = "\(favouritesArray.count) City added as favourite"
         }
     }
-    weak var delegate: FavouriteScreenViewControllerProtocol?
+    
     
     
     //
@@ -81,7 +79,6 @@ class FavouriteScreenViewController: UIViewController {
                 self.favScreenVm?.removeAllFavourites()
                 self.favouritesArray = favScreenVm.allFavourites()
                 self.tableView.reloadData()
-                self.delegate?.updateFavBtn?(state: false)
                 alert.dismiss(animated: true, completion: nil)
             }
             
@@ -119,5 +116,22 @@ extension FavouriteScreenViewController: UITableViewDelegate, UITableViewDataSou
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
+    }
+    
+    func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCell.EditingStyle {
+        .delete
+    }
+    
+    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+        if editingStyle == .delete {
+            tableView.beginUpdates()
+            favouritesArray.remove(at: indexPath.row)
+            favScreenVm?.removeFavourite(at: indexPath.row)
+            if let favScreenVm = favScreenVm {
+                favouritesArray = favScreenVm.allFavourites()
+            }
+            tableView.deleteRows(at: [indexPath], with: .fade)
+            tableView.endUpdates()
+        }
     }
 }

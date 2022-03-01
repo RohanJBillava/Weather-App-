@@ -35,6 +35,10 @@ class  RecentScreenViewModel {
         }
     }
     
+    func removeSearch(at index: Int) {
+        recentSearchArray.remove(at: index)
+    }
+    
     func clearSearchHistory() {
         recentSearchArray = []
     }

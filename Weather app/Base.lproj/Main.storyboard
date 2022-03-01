@@ -320,10 +320,10 @@
                                 <rect key="frame" x="-270" y="0.0" width="270" height="667"/>
                                 <subviews>
                                     <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="6" translatesAutoresizingMaskIntoConstraints="NO" id="Lfy-Ix-AUX">
-                                        <rect key="frame" x="30" y="69" width="102" height="111"/>
+                                        <rect key="frame" x="30" y="69" width="92" height="102"/>
                                         <subviews>
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="leading" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="R8E-Fk-aHQ" customClass="slideMenuCustomButton" customModule="Weather_app" customModuleProvider="target">
-                                                <rect key="frame" x="0.0" y="0.0" width="102" height="33"/>
+                                                <rect key="frame" x="0.0" y="0.0" width="92" height="30"/>
                                                 <state key="normal" title="Home">
                                                     <color key="titleColor" systemColor="labelColor"/>
                                                 </state>
@@ -340,7 +340,7 @@
                                                 </connections>
                                             </button>
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="leading" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="vaD-Nu-YcA" customClass="slideMenuCustomButton" customModule="Weather_app" customModuleProvider="target">
-                                                <rect key="frame" x="0.0" y="39" width="102" height="33"/>
+                                                <rect key="frame" x="0.0" y="36" width="92" height="30"/>
                                                 <state key="normal" title="Favourite">
                                                     <color key="titleColor" systemColor="labelColor"/>
                                                 </state>
@@ -355,7 +355,7 @@
                                                 </connections>
                                             </button>
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="leading" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="uw3-Mx-OKx" customClass="slideMenuCustomButton" customModule="Weather_app" customModuleProvider="target">
-                                                <rect key="frame" x="0.0" y="78" width="102" height="33"/>
+                                                <rect key="frame" x="0.0" y="72" width="92" height="30"/>
                                                 <state key="normal" title="Recnt Search">
                                                     <color key="titleColor" systemColor="labelColor"/>
                                                 </state>
@@ -671,6 +671,9 @@
                                         <color key="value" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                     </userDefinedRuntimeAttribute>
                                 </userDefinedRuntimeAttributes>
+                                <connections>
+                                    <action selector="clearBtnTapped:" destination="kgU-RH-1Ci" eventType="touchUpInside" id="nvc-rb-9KY"/>
+                                </connections>
                             </button>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="You recently searched for" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="xkH-b0-Cbn" customClass="robotoMediumLabel" customModule="Weather_app" customModuleProvider="target">
                                 <rect key="frame" x="16" y="59" width="161.5" height="20.5"/>
@@ -844,7 +847,7 @@
     </scenes>
     <designables>
         <designable name="16H-l3-50C">
-            <size key="intrinsicContentSize" width="63" height="33"/>
+            <size key="intrinsicContentSize" width="57" height="30"/>
         </designable>
         <designable name="8eM-I9-qH4">
             <size key="intrinsicContentSize" width="95.5" height="20.5"/>
@@ -855,7 +858,7 @@
         <designable name="98K-72-oY0"/>
         <designable name="AAl-pE-G56"/>
         <designable name="DAd-5J-m8s">
-            <size key="intrinsicContentSize" width="85" height="33"/>
+            <size key="intrinsicContentSize" width="76" height="30"/>
         </designable>
         <designable name="Ese-vL-sE5">
             <size key="intrinsicContentSize" width="109" height="20.5"/>
@@ -865,7 +868,7 @@
             <size key="intrinsicContentSize" width="76" height="20.5"/>
         </designable>
         <designable name="R8E-Fk-aHQ">
-            <size key="intrinsicContentSize" width="46" height="33"/>
+            <size key="intrinsicContentSize" width="41" height="30"/>
         </designable>
         <designable name="Vk7-SF-dJN">
             <size key="intrinsicContentSize" width="37" height="20.5"/>
@@ -874,15 +877,15 @@
             <size key="intrinsicContentSize" width="68.5" height="20.5"/>
         </designable>
         <designable name="gL7-ob-b3n">
-            <size key="intrinsicContentSize" width="26" height="20.5"/>
+            <size key="intrinsicContentSize" width="28.5" height="21"/>
         </designable>
         <designable name="gVf-YZ-ndf"/>
         <designable name="qet-2d-1tI"/>
         <designable name="uw3-Mx-OKx">
-            <size key="intrinsicContentSize" width="102" height="33"/>
+            <size key="intrinsicContentSize" width="92" height="30"/>
         </designable>
         <designable name="vaD-Nu-YcA">
-            <size key="intrinsicContentSize" width="70" height="33"/>
+            <size key="intrinsicContentSize" width="63" height="30"/>
         </designable>
         <designable name="w7n-dP-cyV">
             <size key="intrinsicContentSize" width="166" height="20.5"/>

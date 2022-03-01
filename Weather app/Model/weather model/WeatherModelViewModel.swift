@@ -29,22 +29,27 @@ class WeatherModelViewModel {
         weathers.append(weather)
     }
     
+    
     func fetchAllWeathersData() -> [HomeWeather] {
         var allWeather: [HomeWeather] = []
+        
         for weather in weathers {
             let item = weather.homeWeatherRepresentation()
             allWeather.append(item)
         }
+        
         return allWeather
     }
     
+    
     func save(image: UIImage, id: String) {
         weatherImages.updateValue(image, forKey: id)
-        print(weatherImages)
     }
+    
     
     func fetchWeatherImage(by id: String) -> (img:UIImage?,sucess:Bool) {
         let img = weatherImages[id]
+        
         return img != nil ? (img,true) : (nil,false)
     }
     

@@ -79,6 +79,9 @@ class FavScreenViewModel {
             }
         }
     }
+    func removeFavourite(at index: Int) {
+        favouritesArray.remove(at: index)
+    }
     
     func removeAllFavourites() {
         favouritesArray = []

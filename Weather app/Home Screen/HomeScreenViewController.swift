@@ -7,15 +7,9 @@
 import Foundation
 import UIKit
 
-struct segueIdentifier {
-    let favoutire = "toFavourite"
-    let recent = "toRecent"
-}
+
 
 class HomeScreenViewController: UIViewController {
-    //
-    // MARK: IB OUTLETS
-    //
     
     @IBOutlet weak var temperatureLabel: UILabel!
     
@@ -47,22 +41,24 @@ class HomeScreenViewController: UIViewController {
     @IBOutlet weak var bgViewBottomConstraint: NSLayoutConstraint!
     
   
-    
-    
     //
-    // MARK:CLASS PROPERTIES
+    // MARK:PROPERTIES
     //
     
     let searchBar = UISearchBar()
-    
     let wmvm = WeatherModelViewModel()
     let FavScreenVM = FavScreenViewModel()
     let recentScreenVM = RecentScreenViewModel()
     var weathers = [HomeWeather]()
-    
     let locationManager = LocationManager.shared
     let networkManager = NetworkManager.shared
     let parser = Parser()
+    var customNavBar = CustomNavBar()
+    var FavouriteBtnisOn = false
+    let favBtnToggler = FavBtnToggler()
+    let defaults = UserDefaults.standard
+    let mygroup = DispatchGroup()
+    
     var userDataFetchStatus = false {
         didSet {
             self.weathers = wmvm.fetchAllWeathersData()
@@ -70,10 +66,7 @@ class HomeScreenViewController: UIViewController {
         }
     }
     
-    var customNavBar = CustomNavBar()
-    var FavouriteBtnisOn: Bool = false
-    let favBtnToggler = FavBtnToggler()
-    let defaults = UserDefaults.standard
+    
     //
     // MARK: OVERRIDING METHODS
     //
@@ -84,7 +77,7 @@ class HomeScreenViewController: UIViewController {
         setupLeftNavBar()
         configureCelciusToFarenheitSwitch()
         configSearchBar()
-        self.FavouriteBtnisOn = getFavBtnStatus()
+
         fetchUserCurrentLocationAndData { (done) in
             if done {
                 self.userDataFetchStatus = true
@@ -105,7 +98,6 @@ class HomeScreenViewController: UIViewController {
         let id = segueIdentifier()
         if segue.identifier == id.favoutire {
             let vc = segue.destination as? FavouriteScreenViewController
-            vc?.delegate = self
             vc?.favScreenVm = FavScreenVM
             vc?.navigationItem.title = "Favourite"
             navigationItem.backButtonTitle = ""
@@ -137,9 +129,17 @@ class HomeScreenViewController: UIViewController {
         let minMax = "\(minTemp)°-\(maxTemp)°"
         let description = model.weather.description.capitalized
         let iconID = model.weather.icon
-        fetchImage(from: iconID)
+
+        fetchImage(from: iconID) { (img) in
+            DispatchQueue.main.async {
+                self.weatherImage.image = img
+            }
+            
+        }
+        
         
         DispatchQueue.main.sync {
+            
             placeNameLabel.text = "\(model.name), \(model.country)"
             dateLbl.text = dateString
             temperatureLabel.text = "\(temp)"
@@ -150,15 +150,7 @@ class HomeScreenViewController: UIViewController {
         
     }
     
-    private func getFavBtnStatus() -> Bool {
-        let status =  defaults.bool(forKey: "FavBtnStatus")
-        if status {
-            favBtnToggler.setButtonBackGround(view: favButton, onOffStatus: status)
-        }else{
-            favBtnToggler.setButtonBackGround(view: favButton, onOffStatus: status)
-        }
-        return status
-    }
+    
     
     private func configureBottomView() {
         bottomView.layer.borderWidth = 0.5
@@ -170,8 +162,8 @@ class HomeScreenViewController: UIViewController {
         celciusToFarenheitSwitch.setTitleTextAttributes([NSAttributedString.Key.foregroundColor: UIColor.white], for: .normal)
     }
     
-    private func setupLeftNavBar() {
-        self.navigationItem.leftBarButtonItems = customNavBar.createLeftNav()
+     func setupLeftNavBar() {
+        self.navigationItem.leftBarButtonItems = customNavBar.createLeftBarButtons()
         navigationController?.navigationBar.transparentNavigationBar()
         navigationItem.leftBarButtonItems?.first?.customView?.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(menuBarBtnItemTapped)))
     }
@@ -189,10 +181,9 @@ class HomeScreenViewController: UIViewController {
     }
     
     func createRightBarButtonItem() {
-        let searchBtn = UIBarButtonItem(barButtonSystemItem: .search,
-                                        target: self,
-                                        action: #selector(handleShowSearchBar))
-        searchBtn.tintColor = .white
+        let searchBtn = customNavBar.createRightBarButtons()
+        searchBtn.target = self
+        searchBtn.action = #selector(handleShowSearchBar)
         navigationItem.rightBarButtonItem = searchBtn
     }
     
@@ -205,6 +196,7 @@ class HomeScreenViewController: UIViewController {
         
         if res.isEmpty {
             showAlert(title: "OOPS", message: "searched place not found")
+            
         }else {
             guard let filteredWeather = res.first else {
                 return
@@ -219,10 +211,14 @@ class HomeScreenViewController: UIViewController {
             let minMax = "\(minTemp)°-\(maxTemp)°"
             let description = filteredWeather.weather.description.capitalized
             let iconID = filteredWeather.weather.icon
+            fetchImage(from: iconID) { (img) in
+                DispatchQueue.main.async {
+                    self.weatherImage.image = img
+                }
+            }
             
-             
+            
             DispatchQueue.main.sync {
-                fetchImage(from: iconID)
                 searchbar(shouldShow: false)
                 setupLeftNavBar()
                 bgViewBottomConstraint.constant = view.frame.size.height
@@ -233,18 +229,10 @@ class HomeScreenViewController: UIViewController {
                 humidityLbl.text = "\(humidity)%"
                 tempDescriptionLbl.text = description
                 favBtnToggler.setButtonBackGround(view: favButton, onOffStatus: false)
-                
-//                guard let img = self.weatherImage.image else {
-//                    print("unwrapping img failed")
-//                    return
-//                }
-//                let searchedWeather = FavouriteWeather(location: filteredWeather.name, icon: img, temperature: "\(temp)", weatherDescription: description)
-//                self.recentScreenVM.add(weather: searchedWeather)
             }
             
-            
         }
-        
+
     }
     
     
@@ -252,33 +240,25 @@ class HomeScreenViewController: UIViewController {
     // MARK: DATA FETCHING
     //
     
-    
-    func fetchImage(from iconID: String)   {
-      
+    func fetchImage(from iconID: String, completion: @escaping ((_ img: UIImage) -> Void))  {
         let imageAlreadyExists = wmvm.fetchWeatherImage(by: iconID)
         
         if imageAlreadyExists.sucess {
-            DispatchQueue.main.async {
-                self.weatherImage.image = imageAlreadyExists.img
+            if let img = imageAlreadyExists.img {
+                completion(img)
             }
-            
         }else{
             
             let url: URL = .URLforWeatherIcon(iconid: iconID)
-//            print(url)
             
             networkManager.getImage(from: url) { (image) in
                 self.wmvm.save(image: image, id: iconID)
-                DispatchQueue.main.async {
-                    self.weatherImage.image = image
-                }
-               
+                
+                completion(image)
             }
         }
-      
+        
     }
-    
-   
     
     private func fetchUserCurrentLocationAndData(completion: @escaping ((Bool) -> Void) ) {
         locationManager.getUserLocation { (location) in
@@ -306,8 +286,9 @@ class HomeScreenViewController: UIViewController {
     //
     // MARK: IB ACTIONS
     //
+    
     @IBAction func slideMenuFavBtnTapped(_ sender: Any) {
-//        let segueId = segueIdentifier()
+        
         
     }
     
@@ -367,6 +348,8 @@ class HomeScreenViewController: UIViewController {
     @IBAction func favBtnTapped(_ sender: UIButton) {
         
         FavouriteBtnisOn.toggle()
+        favBtnToggler.setButtonBackGround(view: sender, onOffStatus: FavouriteBtnisOn)
+        
         guard let location = placeNameLabel.text,
         let icon = weatherImage.image,
         let temperature = temperatureLabel.text,
@@ -385,7 +368,7 @@ class HomeScreenViewController: UIViewController {
         }
           
         
-        favBtnToggler.setButtonBackGround(view: sender, onOffStatus: FavouriteBtnisOn)
+        
     }
     
     
@@ -422,7 +405,7 @@ class HomeScreenViewController: UIViewController {
         }
     }
     
-    func saveSearchedPlace() {
+    func saveSearchedPlace(){
         DispatchQueue.main.async {
             guard let location = self.placeNameLabel.text,
                   let icon = self.weatherImage.image,
@@ -432,95 +415,10 @@ class HomeScreenViewController: UIViewController {
             }
             
             let weather = FavouriteWeather(location: location, icon: icon, temperature: temperature, weatherDescription: description)
-            
             self.recentScreenVM.add(weather: weather)
+
         }
-        
-        
-    }
-    
-}
-
-//
-//MARK: EXTENSIONS
-//
-
-extension UINavigationBar {
-    func transparentNavigationBar() {
-    self.setBackgroundImage(UIImage(), for: .default)
-    self.shadowImage = UIImage()
-    self.isTranslucent = true
-    }
-}
-
-extension UIViewController {
-    func showAlert(title: String, message: String) {
-        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
-        let ok = UIAlertAction(title: "ok", style: .cancel) { (ok) in
-            self.dismiss(animated: true, completion: nil)
         }
-        
-        alert.addAction(ok)
-        present(alert, animated: true, completion: nil)
-    }
+ 
 }
 
-extension HomeScreenViewController: UISearchBarDelegate {
-   
-    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
-        searchbar(shouldShow: false)
-        setupLeftNavBar()
-        bgViewBottomConstraint.constant = view.frame.size.height
-    }
-    
-    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
-        if let searchText = searchBar.text {
-            
-            if  let url: URL = .getURLForCityName(q: searchText) {
-                networkManager.getWeatherDetailsForCity(url: url) { (data, sucess) in
-                    if sucess {
-                        print(sucess)
-                        if let data = data {
-                            guard let weatherData = self.parser.parse(data: data) else {
-                                return
-                            }
-                            let weather = self.parser.convertDataToModel(data: weatherData)
-//                            print(weather)
-                            
-                            self.wmvm.add(weather: weather)
-                            self.updateUI(for: weather.name)
-                            
-                            DispatchQueue.main.sync {
-                                searchBar.text = ""
-                            }
-                            self.saveSearchedPlace()
-                        }
-                        
-                    }else {
-                        DispatchQueue.main.async {
-                            searchBar.text = ""
-                            self.showAlert(title: "Invalid City", message: "please enter city name properly")
-                        }
-                    }
-                }
-            }else {
-                searchBar.text = ""
-                showAlert(title: "Invalid City", message: "please enter city name properly")
-                
-            }
-            
-            
-        }
-    }
-    
-   
-}
-
-
-extension HomeScreenViewController: FavouriteScreenViewControllerProtocol {
-    func updateFavBtn(state: Bool) {
-        FavouriteBtnisOn = state
-        defaults.setValue(FavouriteBtnisOn, forKey: "FavBtnStatus")
-        favBtnToggler.setButtonBackGround(view: favButton, onOffStatus: state)
-    }
-}

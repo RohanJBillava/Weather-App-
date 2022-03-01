@@ -53,7 +53,28 @@ class RecentScreenViewController: UIViewController {
         print("tap tap")
     }
     
-
+    @IBAction func clearBtnTapped(_ sender: UIButton) {
+        
+        let alert = UIAlertController(title: "", message: "Are you sure want to remove all the favourites?", preferredStyle: .alert)
+        let no = UIAlertAction(title: "No", style: .cancel) { (no) in
+            alert.dismiss(animated: true, completion: nil)
+        }
+        alert.addAction(no)
+        let yes = UIAlertAction(title: "Yes", style: .destructive) { (ok) in
+            if let recentScreenVM = self.recentScreenVM {
+                recentScreenVM.clearSearchHistory()
+                self.recentsArr = recentScreenVM.allSearches()
+                self.table.reloadData()
+                
+                alert.dismiss(animated: true, completion: nil)
+            }
+            
+        }
+        alert.addAction(yes)
+        present(alert, animated: true, completion: nil)
+    }
+    
+    
 }
 
 
@@ -82,5 +103,26 @@ extension RecentScreenViewController: UITableViewDelegate, UITableViewDataSource
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 80
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
+    }
+    
+    func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCell.EditingStyle {
+        .delete
+    }
+    
+    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+        if editingStyle == .delete {
+            tableView.beginUpdates()
+            guard let rsvm = recentScreenVM else {
+                return
+            }
+            rsvm.removeSearch(at: indexPath.row)
+            recentsArr.remove(at: indexPath.row)
+            tableView.deleteRows(at: [indexPath], with: .fade)
+            tableView.endUpdates()
+        }
     }
 }
