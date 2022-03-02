@@ -38,11 +38,7 @@ extension HomeScreenViewController: UISearchBarDelegate {
                                 self.wmvm.add(weather: weather)
                                 
                                 self.updateUI(for: weather.name)
-                                DispatchQueue.main.asyncAfter(deadline: .now()+0.2) {
-                                    self.saveSearchedPlace()
-                                }
-                               
-                              
+                        
                                 DispatchQueue.main.sync {
                                     searchBar.text = ""
                                 }

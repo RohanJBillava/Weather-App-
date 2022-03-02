@@ -214,6 +214,7 @@ class HomeScreenViewController: UIViewController {
             fetchImage(from: iconID) { (img) in
                 DispatchQueue.main.async {
                     self.weatherImage.image = img
+                    self.saveSearchedPlace()
                 }
             }
             
