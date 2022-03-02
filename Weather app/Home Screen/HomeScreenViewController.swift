@@ -90,7 +90,7 @@ class HomeScreenViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(true)
         createRightBarButtonItem()
-                
+        closeSlideMenu()
     }
     
     
@@ -115,6 +115,11 @@ class HomeScreenViewController: UIViewController {
     //
     // MARK: UI METHODS
     //
+    
+    func closeSlideMenu() {
+        sideMenuLeadingConstraint.constant = -270
+        navigationItem.leftBarButtonItems?.last?.customView?.isHidden = false
+    }
     
     func setUpHomeSCreenUsingWMVM() {
         guard let model = weathers.first else {
@@ -166,6 +171,7 @@ class HomeScreenViewController: UIViewController {
         self.navigationItem.leftBarButtonItems = customNavBar.createLeftBarButtons()
         navigationController?.navigationBar.transparentNavigationBar()
         navigationItem.leftBarButtonItems?.first?.customView?.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(menuBarBtnItemTapped)))
+        navigationItem.leftBarButtonItems?.last?.customView?.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(weatherLogoTapped)))
     }
     
     func animateSlideMenu() {
@@ -294,6 +300,18 @@ class HomeScreenViewController: UIViewController {
     }
     
     @IBAction func slideMenuRecentsearchBtnTapped(_ sender: Any) {
+    }
+    
+    @objc func weatherLogoTapped() {
+        showToast(message: "Refreshing \nplease wait", x: view.frame.width/2 - 100, y: self.view.frame.height - 150, width: 200, height: 100, font: UIFont(name: "Roboto-Medium", size: 20), radius: 28)
+        
+        fetchUserCurrentLocationAndData { (done) in
+            if done {
+                self.userDataFetchStatus = true
+            }else {
+                self.userDataFetchStatus = false
+            }
+        }
     }
     
     @objc func handleShowSearchBar() {

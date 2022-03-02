@@ -17,7 +17,7 @@ import UIKit
         button1.setImage(#imageLiteral(resourceName: "logo"), for: .normal)
         
         button1.frame = CGRect(x: 0, y: 0, width: 113, height: 24)
-        button1.isUserInteractionEnabled = false
+        button1.isUserInteractionEnabled = true
         
         let LogobarButton = UIBarButtonItem(customView: button1)
         LogobarButton.accessibilityRespondsToUserInteraction = false

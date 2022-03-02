@@ -16,14 +16,16 @@ class FavouriteScreenViewController: UIViewController {
     
     @IBOutlet weak var favouriteCount: robotoRegularFontLabel!
     
-//    var homeScreenVM: WeatherModelViewModel?
+    var searchBar = UISearchBar()
     var favScreenVm: FavScreenViewModel?
     var favouritesArray:[FavouriteWeather] = [] {
         didSet {
             favouriteCount.text = "\(favouritesArray.count) City added as favourite"
+            filteredData = favouritesArray
         }
     }
     
+    var filteredData:[FavouriteWeather] = []
     
     
     //
@@ -34,8 +36,8 @@ class FavouriteScreenViewController: UIViewController {
         super.viewDidLoad()
         createRightBarButtonItem()
         tableView.backgroundColor = .none
-        navigationController?.navigationBar.backgroundColor = .white
-        navigationController?.navigationBar.tintColor = .black
+        configNavigationController()
+        configSearchBar()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -43,7 +45,6 @@ class FavouriteScreenViewController: UIViewController {
         if let favScreenVm = favScreenVm {
             self.favouritesArray = favScreenVm.allFavourites()
                 tableView.reloadData()
-           
         }
         
     }
@@ -55,6 +56,16 @@ class FavouriteScreenViewController: UIViewController {
     }
     
 
+    func configNavigationController() {
+        navigationController?.navigationBar.backgroundColor = .white
+        navigationController?.navigationBar.tintColor = .black
+    }
+    
+    func configSearchBar() {
+        searchBar.sizeToFit()
+        searchBar.delegate = self
+        
+    }
     
     // MARK: RIGHT NAV BAR ITEMS
     func createRightBarButtonItem() {
@@ -65,7 +76,11 @@ class FavouriteScreenViewController: UIViewController {
     }
 
     @objc func searchBtnTapped() {
-        print("tap tap")
+        navigationItem.titleView = searchBar
+        navigationItem.rightBarButtonItem = nil
+        searchBar.showsCancelButton = true
+        searchBar.becomeFirstResponder()
+        
     }
     
     @IBAction func removeAllBtnTapped(_ sender: UIButton) {
@@ -99,11 +114,11 @@ extension FavouriteScreenViewController: UITableViewDelegate, UITableViewDataSou
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        favouritesArray.count
+        filteredData.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let weather = favouritesArray[indexPath.row]
+        let weather = filteredData[indexPath.row]
         let cell = tableView.dequeueReusableCell(withIdentifier: "favCell", for: indexPath) as! customFavouriteTableViewCell
         cell.configureFavWeather(weather: weather)
         cell.configureCell()
@@ -134,4 +149,51 @@ extension FavouriteScreenViewController: UITableViewDelegate, UITableViewDataSou
             tableView.endUpdates()
         }
     }
+}
+
+extension FavouriteScreenViewController: UISearchBarDelegate {
+    
+    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
+        navigationItem.titleView = nil
+        searchBar.showsCancelButton = false
+        searchBar.text = ""
+        self.createRightBarButtonItem()
+        filteredData = favouritesArray
+        tableView.reloadData()
+    }
+    
+    func extractLocation(from text: String) -> String.SubSequence? {
+        guard  let indexOfComma = text.firstIndex(of: ",") else {
+            return nil
+        }
+        let start = text.startIndex
+        let end = text.index(before: indexOfComma)
+        let range = start...end
+        let str = text[range]
+
+        return str
+
+    }
+    
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        filteredData = favouritesArray.filter { (item) -> Bool in
+            
+            guard let location = extractLocation(from: item.location) else {
+                return false
+            }
+            print(location)
+          
+            if searchText == "" {
+                return true
+            }else if location.lowercased().contains(searchText.lowercased()) {
+                return true
+            }else {
+                return false
+            }
+            
+        }
+        tableView.reloadData()
+        
+    }
+    
 }

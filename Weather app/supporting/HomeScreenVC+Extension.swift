@@ -76,6 +76,7 @@ extension UINavigationBar {
 }
 
 extension UIViewController {
+    
     func showAlert(title: String, message: String) {
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
         let ok = UIAlertAction(title: "ok", style: .cancel) { (ok) in
@@ -84,5 +85,27 @@ extension UIViewController {
         
         alert.addAction(ok)
         present(alert, animated: true, completion: nil)
+    }
+    
+    func showToast(message: String, x: CGFloat, y: CGFloat, width: CGFloat, height: CGFloat, font: UIFont?, radius: CGFloat) {
+        
+        let toastLabel = UILabel(frame: CGRect(x:  x, y: y, width: width, height: height))
+        toastLabel.textAlignment = .center
+        toastLabel.font = font ?? UIFont.systemFont(ofSize: 16)
+        toastLabel.numberOfLines = 0
+        toastLabel.backgroundColor = #colorLiteral(red: 0.3179988265, green: 0.3179988265, blue: 0.3179988265, alpha: 0.4201359161)
+        toastLabel.textColor = .white
+        toastLabel.alpha = 1.0
+        toastLabel.layer.cornerRadius = radius
+        toastLabel.clipsToBounds = true
+        toastLabel.text = message
+        self.view.addSubview(toastLabel)
+        
+        UIView.animate(withDuration: 1.0, delay: 1.0, options: .curveEaseInOut, animations: {
+            toastLabel.alpha = 0.0
+        }, completion: { isCompleted in
+            toastLabel.removeFromSuperview()
+        }
+        )
     }
 }
