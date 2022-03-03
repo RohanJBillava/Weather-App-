@@ -26,7 +26,7 @@ class FavouriteScreenViewController: UIViewController {
     }
     
     var filteredData:[FavouriteWeather] = []
-    
+    let customNavBar = CustomNavBar()
     
     //
     // MARK: VIEW METHODS
@@ -64,15 +64,16 @@ class FavouriteScreenViewController: UIViewController {
     func configSearchBar() {
         searchBar.sizeToFit()
         searchBar.delegate = self
-        
     }
     
     // MARK: RIGHT NAV BAR ITEMS
     func createRightBarButtonItem() {
         
-        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .search,
-                                                            target: self,
-                                                            action: #selector(searchBtnTapped))
+        let searchBarItem = customNavBar.createRightBarButtons()
+        searchBarItem.action = #selector(searchBtnTapped)
+        searchBarItem.target = self
+        searchBarItem.tintColor = .black
+        navigationItem.rightBarButtonItem = searchBarItem
     }
 
     @objc func searchBtnTapped() {
@@ -162,30 +163,25 @@ extension FavouriteScreenViewController: UISearchBarDelegate {
         tableView.reloadData()
     }
     
-    func extractLocation(from text: String) -> String.SubSequence? {
-        guard  let indexOfComma = text.firstIndex(of: ",") else {
-            return nil
-        }
-        let start = text.startIndex
-        let end = text.index(before: indexOfComma)
-        let range = start...end
-        let str = text[range]
-
-        return str
-
-    }
+//    func extractLocation(from text: String) -> String.SubSequence? {
+//        guard  let indexOfComma = text.firstIndex(of: ",") else {
+//            return nil
+//        }
+//        let start = text.startIndex
+//        let end = text.index(before: indexOfComma)
+//        let range = start...end
+//        let str = text[range]
+//
+//        return str
+//
+//    }
     
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         filteredData = favouritesArray.filter { (item) -> Bool in
             
-            guard let location = extractLocation(from: item.location) else {
-                return false
-            }
-            print(location)
-          
             if searchText == "" {
                 return true
-            }else if location.lowercased().contains(searchText.lowercased()) {
+            }else if item.location.lowercased().contains(searchText.lowercased()) {
                 return true
             }else {
                 return false

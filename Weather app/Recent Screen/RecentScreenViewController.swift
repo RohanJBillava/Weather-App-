@@ -13,8 +13,17 @@ class RecentScreenViewController: UIViewController {
     
     @IBOutlet weak var table: UITableView!
     
+    
+    let customNavBar = CustomNavBar()
+    var searchBar = UISearchBar()
     var recentScreenVM: RecentScreenViewModel?
-    var recentsArr:[FavouriteWeather] = []
+    var recentsArr:[FavouriteWeather] = [] {
+        didSet {
+            filteredRecentsArr = recentsArr
+        }
+    }
+    var filteredRecentsArr: [FavouriteWeather] = []
+    
     //
     // MARK: VIEW METHODS
     //
@@ -24,9 +33,8 @@ class RecentScreenViewController: UIViewController {
         super.viewDidLoad()
         createRightBarButtonItem()
         table.backgroundColor = .none
-        navigationController?.navigationBar.backgroundColor = .white
-        navigationController?.navigationBar.tintColor = .black
-        
+        configNavigationController()
+        configSearchBar()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -42,15 +50,33 @@ class RecentScreenViewController: UIViewController {
         navigationController?.navigationBar.tintColor = .none
     }
     
-    func createRightBarButtonItem() {
-        
-        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .search,
-                                                            target: self,
-                                                            action: #selector(searchBtnTapped))
+    func configNavigationController() {
+        navigationController?.navigationBar.backgroundColor = .white
+        navigationController?.navigationBar.tintColor = .black
     }
     
+    func configSearchBar() {
+        searchBar.sizeToFit()
+        searchBar.delegate = self
+        
+    }
+    
+    func createRightBarButtonItem() {
+        
+        let searchBarItem = customNavBar.createRightBarButtons()
+        searchBarItem.action = #selector(searchBtnTapped)
+        searchBarItem.target = self
+        searchBarItem.tintColor = .black
+        navigationItem.rightBarButtonItem = searchBarItem
+    }
+    
+    
+    
     @objc func searchBtnTapped() {
-        print("tap tap")
+        searchBar.showsCancelButton = true
+        navigationItem.rightBarButtonItem = nil
+        searchBar.becomeFirstResponder()
+        navigationItem.titleView = searchBar
     }
     
     @IBAction func clearBtnTapped(_ sender: UIButton) {
@@ -85,11 +111,11 @@ class RecentScreenViewController: UIViewController {
 
 extension RecentScreenViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return recentsArr.count
+        return filteredRecentsArr.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let weather = recentsArr[indexPath.row]
+        let weather = filteredRecentsArr[indexPath.row]
         let cell = table.dequeueReusableCell(withIdentifier: "recentCell", for: indexPath) as! recentSCreenTableViewCell
         cell.configureRecentWeather(weather: weather)
         cell.configureCell()
@@ -125,4 +151,36 @@ extension RecentScreenViewController: UITableViewDelegate, UITableViewDataSource
             tableView.endUpdates()
         }
     }
+}
+
+
+extension RecentScreenViewController: UISearchBarDelegate {
+    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
+        navigationItem.titleView = nil
+        searchBar.showsCancelButton = false
+        searchBar.text = ""
+        self.createRightBarButtonItem()
+    }
+    
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        filteredRecentsArr = recentsArr.filter { (item) -> Bool in
+            
+            if searchText == "" {
+                return true
+            }else if item.location.lowercased().contains(searchText.lowercased()) {
+                return true
+            }else {
+                return false
+            }
+            
+        }
+        table.reloadData()
+        
+    }
+    
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        searchBar.text = ""
+    }
+    
+    
 }

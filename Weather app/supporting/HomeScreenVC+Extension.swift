@@ -19,7 +19,10 @@ extension HomeScreenViewController: UISearchBarDelegate {
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
         searchbar(shouldShow: false)
         setupLeftNavBar()
-        bgViewBottomConstraint.constant = view.frame.size.height
+        searchBgView.removeFromSuperview()
+//        filteredRecentSearches = recentSearches
+        searchBar.text = ""
+//        searchBarTableView.reloadData()
     }
 
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
@@ -63,7 +66,21 @@ extension HomeScreenViewController: UISearchBarDelegate {
 //            self.saveSearchedPlace()
 //        }
     }
-
+    
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        filteredRecentSearches = recentSearches.filter { (item) -> Bool in
+            
+            if searchText == "" {
+                return true
+            }else if item.lowercased().contains(searchText.lowercased()) {
+                return true
+            }else {
+                return false
+            }
+            
+        }
+        searchBarTableView.reloadData()
+    }
 
 }
 
@@ -109,3 +126,4 @@ extension UIViewController {
         )
     }
 }
+

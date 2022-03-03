@@ -10,10 +10,16 @@ import UIKit
 
 class  RecentScreenViewModel {
     var dataStore = DataStore()
+    var recentlySearchedPlace: [String] = []
     
     var recentSearchArray: [FavouriteWeather] = [] {
         didSet {
             dataStore.save(recentArr: recentSearchArray)
+            
+            for weather in recentSearchArray {
+                recentlySearchedPlace.append(weather.location)
+            }
+            
         }
     }
     

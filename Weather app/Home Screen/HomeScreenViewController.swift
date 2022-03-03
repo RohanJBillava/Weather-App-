@@ -38,7 +38,7 @@ class HomeScreenViewController: UIViewController {
     
     @IBOutlet weak var favButton: UIButton!
     
-    @IBOutlet weak var bgViewBottomConstraint: NSLayoutConstraint!
+  
     
   
     //
@@ -46,6 +46,14 @@ class HomeScreenViewController: UIViewController {
     //
     
     let searchBar = UISearchBar()
+    let searchBgView: UIView = {
+       let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.backgroundColor = .white
+        return view
+    }()
+    let searchBarTableView = UITableView()
+    
     let wmvm = WeatherModelViewModel()
     let FavScreenVM = FavScreenViewModel()
     let recentScreenVM = RecentScreenViewModel()
@@ -65,6 +73,14 @@ class HomeScreenViewController: UIViewController {
             setUpHomeSCreenUsingWMVM()
         }
     }
+    
+    var recentSearches: [String] = [] {
+        didSet {
+            filteredRecentSearches = recentSearches
+            print(filteredRecentSearches.count)
+        }
+    }
+    var filteredRecentSearches: [String] = []
     
     
     //
@@ -91,6 +107,10 @@ class HomeScreenViewController: UIViewController {
         super.viewWillAppear(true)
         createRightBarButtonItem()
         closeSlideMenu()
+//        let x = recentScreenVM.allSearches()
+        let x = Array(Set(recentScreenVM.recentlySearchedPlace))
+       
+        recentSearches = x
     }
     
     
@@ -228,7 +248,7 @@ class HomeScreenViewController: UIViewController {
             DispatchQueue.main.sync {
                 searchbar(shouldShow: false)
                 setupLeftNavBar()
-                bgViewBottomConstraint.constant = view.frame.size.height
+                searchBgView.removeFromSuperview()
                 placeNameLabel.text = "\(filteredWeather.name), \(filteredWeather.country)"
                 dateLbl.text = dateString
                 temperatureLabel.text = "\(temp)"
@@ -236,6 +256,8 @@ class HomeScreenViewController: UIViewController {
                 humidityLbl.text = "\(humidity)%"
                 tempDescriptionLbl.text = description
                 favBtnToggler.setButtonBackGround(view: favButton, onOffStatus: false)
+//                filteredRecentSearches = recentSearches
+//                searchBarTableView.reloadData()
             }
             
         }
@@ -317,9 +339,26 @@ class HomeScreenViewController: UIViewController {
     @objc func handleShowSearchBar() {
         searchBar.becomeFirstResponder()
         navigationItem.leftBarButtonItems = nil
-        bgViewBottomConstraint.constant = 0
+
         searchbar(shouldShow: true)
+        view.addSubview(searchBgView)
+        searchBgView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor).isActive = true
+        searchBgView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor).isActive = true
+        searchBgView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor).isActive = true
+        searchBgView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor).isActive = true
+        configSearchBarTable()
+        
+        
     }
+    
+    func configSearchBarTable() {
+        searchBarTableView.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
+        searchBarTableView.delegate = self
+        searchBarTableView.dataSource = self
+        searchBarTableView.frame = view.bounds
+        searchBgView.addSubview(searchBarTableView)
+    }
+    
     
     @IBAction func celciusToFarenheitTapped(_ sender: UISegmentedControl) {
         
@@ -441,3 +480,38 @@ class HomeScreenViewController: UIViewController {
  
 }
 
+extension HomeScreenViewController: UITableViewDelegate, UITableViewDataSource {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        filteredRecentSearches.count
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        
+        let place = filteredRecentSearches[indexPath.row]
+        let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
+        cell.textLabel?.text = place
+        return cell
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let text = filteredRecentSearches[indexPath.row]
+        guard let extractedString = extractLocation(from: text) else {
+            return
+        }
+        searchBar.text = String(extractedString)
+        tableView.deselectRow(at: indexPath, animated: true)
+    }
+    
+        func extractLocation(from text: String) -> String.SubSequence? {
+            guard  let indexOfComma = text.firstIndex(of: ",") else {
+                return nil
+            }
+            let start = text.startIndex
+            let end = text.index(before: indexOfComma)
+            let range = start...end
+            let str = text[range]
+    
+            return str
+    
+        }
+}

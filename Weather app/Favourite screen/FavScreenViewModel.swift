@@ -31,6 +31,8 @@ class FavouriteWeather: NSObject, NSCoding {
         self.weatherDescription = weatherDescription
     }
     
+   
+
     func encode(with coder: NSCoder) {
         coder.encode(location, forKey: CodingKeys.location.rawValue)
         coder.encode(icon, forKey: CodingKeys.icon.rawValue)
@@ -51,6 +53,7 @@ class FavouriteWeather: NSObject, NSCoding {
     
     
 }
+
 
 
 class FavScreenViewModel {
