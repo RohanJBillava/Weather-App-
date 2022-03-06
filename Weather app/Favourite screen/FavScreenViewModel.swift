@@ -14,6 +14,7 @@ class FavouriteWeather: NSObject, NSCoding {
         case icon = "icon"
         case temperature = "temperature"
         case weatherDescription = "weatherDescription"
+        case isFavOn = "isFavOn"
     }
     
     
@@ -23,12 +24,14 @@ class FavouriteWeather: NSObject, NSCoding {
     var icon: UIImage
     var temperature: String
     var weatherDescription: String
+    var isFavOn: Bool
     
-    init(location: String, icon: UIImage, temperature: String, weatherDescription: String) {
+    init(location: String, icon: UIImage, temperature: String, weatherDescription: String, isFavOn: Bool) {
         self.location = location
         self.icon = icon
         self.temperature = temperature
         self.weatherDescription = weatherDescription
+        self.isFavOn = isFavOn
     }
     
    
@@ -38,6 +41,7 @@ class FavouriteWeather: NSObject, NSCoding {
         coder.encode(icon, forKey: CodingKeys.icon.rawValue)
         coder.encode(temperature, forKey: CodingKeys.temperature.rawValue)
         coder.encode(weatherDescription, forKey: CodingKeys.weatherDescription.rawValue)
+        coder.encode(isFavOn, forKey: CodingKeys.isFavOn.rawValue)
         
     }
     
@@ -45,10 +49,12 @@ class FavouriteWeather: NSObject, NSCoding {
         guard let loc = coder.decodeObject(forKey: CodingKeys.location.rawValue) as? String,
               let icon = coder.decodeObject(forKey: CodingKeys.icon.rawValue) as? UIImage,
               let temp = coder.decodeObject(forKey: CodingKeys.temperature.rawValue) as? String,
-              let desc = coder.decodeObject(forKey: CodingKeys.weatherDescription.rawValue) as? String else {
+              let desc = coder.decodeObject(forKey: CodingKeys.weatherDescription.rawValue) as? String
+               else {
             return nil
         }
-        self.init(location: loc, icon: icon, temperature: temp, weatherDescription: desc)
+        let isOn = coder.decodeBool(forKey: CodingKeys.isFavOn.rawValue)
+        self.init(location: loc, icon: icon, temperature: temp, weatherDescription: desc, isFavOn: isOn)
     }
     
     

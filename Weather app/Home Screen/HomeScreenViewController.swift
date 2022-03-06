@@ -171,6 +171,15 @@ class HomeScreenViewController: UIViewController {
             minMaxLbl.text = minMax
             humidityLbl.text = "\(humidity)%"
             tempDescriptionLbl.text = description
+            
+            let favCheck = isWeatherAlreadyFavourite(for: "\(model.name), \(model.country)")
+            if favCheck {
+                FavouriteBtnisOn = favCheck
+                favBtnToggler.setButtonBackGround(view: favButton, onOffStatus: favCheck)
+            }else {
+                FavouriteBtnisOn = favCheck
+                favBtnToggler.setButtonBackGround(view: favButton, onOffStatus: favCheck)
+            }
         }
         
     }
@@ -185,6 +194,8 @@ class HomeScreenViewController: UIViewController {
     private func configureCelciusToFarenheitSwitch() {
         celciusToFarenheitSwitch.setTitleTextAttributes([NSAttributedString.Key.foregroundColor: UIColor.systemRed], for: .selected)
         celciusToFarenheitSwitch.setTitleTextAttributes([NSAttributedString.Key.foregroundColor: UIColor.white], for: .normal)
+        celciusToFarenheitSwitch.layer.borderWidth = 1
+        celciusToFarenheitSwitch.layer.borderColor = UIColor.white.cgColor
     }
     
      func setupLeftNavBar() {
@@ -415,14 +426,14 @@ class HomeScreenViewController: UIViewController {
             fatalError("error")
         }
         
-        let weather = FavouriteWeather(location: location, icon: icon, temperature: temperature, weatherDescription: description)
+        let weather = FavouriteWeather(location: location, icon: icon, temperature: temperature, weatherDescription: description, isFavOn: FavouriteBtnisOn)
         
         if FavouriteBtnisOn {
             FavScreenVM.add(weather: weather)
-            defaults.setValue(FavouriteBtnisOn, forKey: "FavBtnStatus")
+//            defaults.setValue(FavouriteBtnisOn, forKey: "FavBtnStatus")
         }else {
             FavScreenVM.remove(weather: weather)
-            defaults.setValue(FavouriteBtnisOn, forKey: "FavBtnStatus")
+//            defaults.setValue(FavouriteBtnisOn, forKey: "FavBtnStatus")
         }
           
         
@@ -472,11 +483,24 @@ class HomeScreenViewController: UIViewController {
                 fatalError("error")
             }
             
-            let weather = FavouriteWeather(location: location, icon: icon, temperature: temperature, weatherDescription: description)
+            let favCheck = self.isWeatherAlreadyFavourite(for: location)
+            
+            self.FavouriteBtnisOn = true
+            self.favBtnToggler.setButtonBackGround(view: self.favButton, onOffStatus: favCheck)
+            
+            let weather = FavouriteWeather(location: location, icon: icon, temperature: temperature, weatherDescription: description, isFavOn: favCheck)
             self.recentScreenVM.add(weather: weather)
 
         }
         }
+    
+    func isWeatherAlreadyFavourite(for location: String) -> Bool {
+        let favArr = FavScreenVM.allFavourites()
+        let result = favArr.contains { (item) -> Bool in
+            location == item.location
+        }
+        return result
+    }
  
 }
 

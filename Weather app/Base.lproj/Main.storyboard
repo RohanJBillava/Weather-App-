@@ -774,6 +774,7 @@
                                             </constraints>
                                         </tableViewCellContentView>
                                         <connections>
+                                            <outlet property="favBtn" destination="frX-Us-PKl" id="G68-mN-sRq"/>
                                             <outlet property="icon" destination="8Xq-Tw-B2U" id="sD3-R4-7NS"/>
                                             <outlet property="location" destination="w7n-dP-cyV" id="zGF-UA-Za6"/>
                                             <outlet property="subView" destination="qqb-A4-dkp" id="MI1-D9-XVv"/>
