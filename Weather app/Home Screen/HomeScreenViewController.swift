@@ -485,7 +485,7 @@ class HomeScreenViewController: UIViewController {
             
             let favCheck = self.isWeatherAlreadyFavourite(for: location)
             
-            self.FavouriteBtnisOn = true
+            self.FavouriteBtnisOn = favCheck
             self.favBtnToggler.setButtonBackGround(view: self.favButton, onOffStatus: favCheck)
             
             let weather = FavouriteWeather(location: location, icon: icon, temperature: temperature, weatherDescription: description, isFavOn: favCheck)
